@@ -8,16 +8,13 @@ import pandas as pd
 stop_words = set(stopwords.words('english'))
 
 def remove_html(text):
-    """
-    Remove HTML tags from a string using BeautifulSoup.
-    """
     try:
+        text = str(text)  # ensure it's a string
         soup = BeautifulSoup(text, "html.parser")
         return soup.get_text()
     except Exception as e:
-        # In case text is not valid HTML
         print(f"Error removing HTML: {e}")
-        return text  # fallback to original text
+        return ""
 
 def clean_text(text, lemmatize=False):
     """
@@ -64,7 +61,7 @@ def preprocess_dataframe(df, output_csv_path=None):
         # Apply cleaning
         df['cleaned_text'] = df['full_text'].apply(lambda x: clean_text(x))
         
-        df = df[~['cleaned_text'].isna()]
+        df = df[~df['cleaned_text'].isna()]
         df = df[df['cleaned_text'].str.strip() != ""]
 
         # Select relevant columns
@@ -83,19 +80,5 @@ def preprocess_dataframe(df, output_csv_path=None):
         print(f"Error in preprocessing DataFrame: {e}")
         return pd.DataFrame()  # return empty DF on failure
 
-
-
-
-# from sklearn.feature_extraction.text import TfidfVectorizer
-
-# tfvec = TfidfVectorizer(ngram_range=(1,2), max_features=5000)
-# X = tfvec.fit_transform(cleaned_df['cleaned_text'])
-# feature_names = tfvec.get_feature_names_out()
-# feature_names
-# X[0].toarray()
-# y = pd.get_dummies(cleaned_df['label'])
-# y = y.iloc[:,1].values
-# y = y.astype(int)
-# y
 
 
