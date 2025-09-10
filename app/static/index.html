@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake News Detector</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    textarea {
+      width: 400px;
+      height: 150px;
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      border-radius: 5px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fake News Detector</h1>
+  
+  <textarea id="newsText" placeholder="Paste news text here..."></textarea>
+  <br>
+  <button onclick="predict()">Check</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function predict() {
+      const text = document.getElementById("newsText").value;
+      if (!text.trim()) {
+        alert("Please enter some text");
+        return;
+      }
+
+      const response = await fetch("/api/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: text })
+      });
+
+      const data = await response.json();
+      document.getElementById("result").innerText =
+        `Prediction: ${data.prediction} (Confidence: ${(data.confidence * 100).toFixed(2)}%)`;
+    }
+  </script>
+</body>
+</html>
